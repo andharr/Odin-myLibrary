@@ -3,17 +3,8 @@
 const normalPeople = new Book ('Normal People', 'Sally Rooney', 280, 'Yes')
 const theseTruths = new Book ('These Truths', 'Jill LePore', 960, 'Yes')
 
-let myLibrary = [normalPeople, theseTruths]
+let myLibrary = []
 
-function Book(title, author, pages, read) {
-    this.title = title
-    this.author = author
-    this.pages = pages
-    this.read = read
-    this.info = function() {
-        return `${this.title} by ${this.author} has ${this.pages} pages. I have ${this.read} it.`
-    }
-}
 
 ///////  DOM Selectors ////////
 document.querySelector('.sendIt').addEventListener('click',addBookToLibrary)
@@ -24,43 +15,59 @@ const pagesInput = document.querySelector('#pages')
 const readIt = document.querySelector('#readIt')
 const bookShelf = document.querySelector('.bookShelf')
 const openForm = document.querySelector('#openForm')
-
-document.querySelector('#openForm').addEventListener('click',openTheForm)
 const theForm = document.querySelector('.formdiv')
 
+document.querySelector('#openForm').addEventListener('click',openTheForm)
 document.querySelector('.close').addEventListener('click',closeTheForm)
 document.querySelector('.reset').addEventListener('click',resetForm)
 
+
+function Book(title, author, pages, read) {
+    this.title = title
+    this.author = author
+    this.pages = pages
+    this.read = read
+}
 
 function addBookToLibrary() {
     let title = titleInput.value
     let author = authorInput.value
     let pages = pagesInput.value
     let read  = readIt.value
-    let newBook = new Book(title, author, pages, read)
 
+    let newBook = new Book(title, author, pages, read)
     myLibrary.push(newBook)
 
     console.log(myLibrary)
 
-    addBookToScreen()
-
+    addBookToScreen(newBook)
 }
 
-function addBookToScreen() {
+
+
+function addBookToScreen(book) {
         const card = document.createElement('div')
         card.className = 'card'
     
         const title = document.createElement('p')
-        const author = document.createElement('p')
-        const pages = document.createElement('p')
-        const read = document.createElement('p')
-    
         title.textContent = `"${titleInput.value}"`
+
+        const author = document.createElement('p')
         author.textContent = authorInput.value
+
+        const pages = document.createElement('p')
         pages.textContent = `Pages: ${pagesInput.value}`
+
+        const read = document.createElement('p')
         read.textContent = `Read: ${readIt.value}`
+
+        const removeButton = document.createElement('button')
+        removeButton.textContent = `Delete`
+        removeButton.id = 'removeButton'
+
+        removeButton.addEventListener('click', () => removeBook(card, book))
     
+        card.appendChild(removeButton)
         card.appendChild(title)
         card.appendChild(author)
         card.appendChild(pages)
@@ -81,6 +88,16 @@ function closeTheForm() {
 
 function resetForm() {
     form.reset()
+}
+
+function removeBook(card, book) {
+    card.remove()
+    myLibrary.splice(myLibrary.indexOf(book), 1)
+    console.log(myLibrary)
+}
+
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1))
 }
 
 
