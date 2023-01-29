@@ -5,9 +5,7 @@ const theseTruths = new Book ('These Truths', 'Jill LePore', 960, 'Yes')
 
 let myLibrary = []
 
-
 ///////  DOM Selectors ////////
-document.querySelector('.sendIt').addEventListener('click',addBookToLibrary)
 const form = document.querySelector('#form')
 const titleInput = document.querySelector('#title')
 const authorInput = document.querySelector('#author') 
@@ -16,12 +14,15 @@ const readIt = document.querySelector('#readIt')
 const bookShelf = document.querySelector('.bookShelf')
 const openForm = document.querySelector('#openForm')
 const theForm = document.querySelector('.formdiv')
+const booksRead = document.querySelector('.booksRead')
 
+document.querySelector('.sendIt').addEventListener('click',addBookToLibrary)
 document.querySelector('#openForm').addEventListener('click',openTheForm)
 document.querySelector('.close').addEventListener('click',closeTheForm)
 document.querySelector('.reset').addEventListener('click',resetForm)
 
 
+//Book constructor
 function Book(title, author, pages, read) {
     this.title = title
     this.author = author
@@ -29,11 +30,31 @@ function Book(title, author, pages, read) {
     this.read = read
 }
 
+// Count number of read books
+let bookCount
+function bookCounter() {
+    bookCount = 0
+    myLibrary.forEach((book) => {
+        if (book.read == true) {
+            bookCount += 1
+    }
+    booksRead.textContent = `Books read: ${bookCount}`
+    return bookCount
+})}
+
+
+
+
+//Adds book to the library array
 function addBookToLibrary() {
     let title = titleInput.value
     let author = authorInput.value
     let pages = pagesInput.value
-    let read  = readIt.value
+    let read  = false
+
+    if (readIt.value == 'yes') {
+        read = true
+    }
 
     let newBook = new Book(title, author, pages, read)
     myLibrary.push(newBook)
@@ -44,37 +65,79 @@ function addBookToLibrary() {
 }
 
 
-
+//Create a card with book information and add to the DOM
 function addBookToScreen(book) {
+        //Create card
         const card = document.createElement('div')
         card.className = 'card'
-    
+
+        //Title
         const title = document.createElement('p')
         title.textContent = `"${titleInput.value}"`
 
+        //Author
         const author = document.createElement('p')
         author.textContent = authorInput.value
 
+        //Pages
         const pages = document.createElement('p')
         pages.textContent = `Pages: ${pagesInput.value}`
 
-        const read = document.createElement('p')
-        read.textContent = `Read: ${readIt.value}`
+        //Read status
+        const readStatus = document.createElement('p')
+        readStatus.textContent = `Read: ${readIt.value}`
 
-        const removeButton = document.createElement('button')
-        removeButton.textContent = `Delete`
+        //Remove book button
+        const removeButton = document.createElement('icon')
+        removeButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>'
         removeButton.id = 'removeButton'
-
         removeButton.addEventListener('click', () => removeBook(card, book))
-    
+
+        //Read status change button
+        const readToggle = document.createElement('label')
+        readToggle.classList.add('switch')
+
+        const inputPart = document.createElement('input')
+        inputPart.type = 'checkbox'
+        inputPart.classList.add('checkbox')
+        book.read ? inputPart.checked = true : !inputPart.checked
+
+        const span = document.createElement('span')
+        span.classList.add('slider', 'round')
+
+        readToggle.append(inputPart)
+        readToggle.append(span)
+
+        readToggle.addEventListener('click', function() {
+            //inputPart.checked = !inputPart.checked
+            book.read = inputPart.checked
+
+        if (book.read) {
+            readStatus.textContent = 'Read: yes'
+            // booksRead.textContent = `Books read: ${bookCount}`
+            
+        } else {
+            readStatus.textContent = 'Read: no'
+            // booksRead.textContent = `Books read: ${bookCount}`
+        }
+        bookCounter()
+        });
+
+        //Set book counter
+        bookCounter()
+        // booksRead.textContent = `Books read: ${bookCount}`
+
+        //Appending elements to the card & DOM
         card.appendChild(removeButton)
         card.appendChild(title)
         card.appendChild(author)
         card.appendChild(pages)
-        card.appendChild(read)
+        card.appendChild(readStatus)
+        card.appendChild(readToggle)
 
         bookShelf.append(card)
 }
+
 
 
 ///////  FORM FUNCTIONS ///////
@@ -90,6 +153,8 @@ function resetForm() {
     form.reset()
 }
 
+
+/// REMOVE BOOKS FROM DISPLAY
 function removeBook(card, book) {
     card.remove()
     myLibrary.splice(myLibrary.indexOf(book), 1)
