@@ -32,15 +32,38 @@ function Book(title, author, pages, read) {
 
 // Count number of read books
 let bookCount
+
+// bookCounter functions
+
+// ForEACH 
+// function bookCounter() {
+//     bookCount = 0
+//     myLibrary.forEach((book) => {
+//         if (book.read == true) {
+//             bookCount += 1
+//     }
+//     booksRead.textContent = `Books read: ${bookCount}`
+//     return bookCount
+// })}
+
+// FILTER
 function bookCounter() {
-    bookCount = 0
-    myLibrary.forEach((book) => {
-        if (book.read == true) {
-            bookCount += 1
-    }
+    bookCount = myLibrary.filter((book)=>book.read).length 
     booksRead.textContent = `Books read: ${bookCount}`
     return bookCount
-})}
+}
+
+
+// REDUCE
+// function bookCounter() {
+//     let booksRead = myLibrary.reduce((count,book)=>{
+//         if(book.read){
+//         return count++
+//         }
+//         },0)
+//     booksRead.textContent = `Books read: ${bookCount}`
+//     return bookCount
+// }
 
 
 
@@ -114,18 +137,15 @@ function addBookToScreen(book) {
 
         if (book.read) {
             readStatus.textContent = 'Read: yes'
-            // booksRead.textContent = `Books read: ${bookCount}`
             
         } else {
             readStatus.textContent = 'Read: no'
-            // booksRead.textContent = `Books read: ${bookCount}`
         }
         bookCounter()
         });
 
         //Set book counter
         bookCounter()
-        // booksRead.textContent = `Books read: ${bookCount}`
 
         //Appending elements to the card & DOM
         card.appendChild(removeButton)
@@ -158,6 +178,7 @@ function resetForm() {
 function removeBook(card, book) {
     card.remove()
     myLibrary.splice(myLibrary.indexOf(book), 1)
+    bookCounter()
     console.log(myLibrary)
 }
 
